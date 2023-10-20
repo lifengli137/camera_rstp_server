@@ -24,7 +24,7 @@ sudo apt-get install supervisor
 sudo vi /etc/supervisor/conf.d/cam.conf
 
 [program:cam]  
-command=bash start.sh playground rtsp://user:pass@ip/live0 /output_path/
+command=bash start.sh cam rtsp://user:pass@ip/live0 /output_path/
 autostart=true  
 autorestart=true  
 startretries=3  
