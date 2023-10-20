@@ -1,55 +1,57 @@
 import vlc  
-import os  
-import sys  
 import time  
+import sys  
+import os  
 from datetime import datetime  
   
-def record_rtsp(camera_name, rtsp_url, output_path):  
+def check_stream(rtsp_url):  
+    instance = vlc.Instance("--no-xlib")  
+    player = instance.media_player_new()  
+    media = instance.media_new(rtsp_url)  
+    player.set_media(media)  
+    player.play()  
+    time.sleep(1)  
+    return player.get_state() == vlc.State.Playing  
+  
+def record_stream(camera_name, rtsp_url, output_path):  
+    output_path = os.path.join(output_path, camera_name)  
+    os.makedirs(output_path, exist_ok=True)  
+  
     while True:  
-        try:  
-            # Initialize VLC instance and media  
+        if check_stream(rtsp_url):  
+            now = datetime.now()  
+            date_path = now.strftime("%Y/%m/%d")  
+            output_folder = os.path.join(output_path, date_path)  
+            os.makedirs(output_folder, exist_ok=True)  
+  
+            output_file = now.strftime("%Y%m%d_%H%M%S") + ".mp4"  
+            output_file_path = os.path.join(output_folder, output_file)  
+  
             instance = vlc.Instance("--no-xlib")  
-            media = instance.media_new(rtsp_url)  
-  
-            # Create output directory  
-            date = datetime.now()  
-            output_dir = os.path.join(output_path, camera_name, date.strftime("%Y/%m/%d"))  
-            os.makedirs(output_dir, exist_ok=True)  
-  
-            # Set output file name  
-            output_file = os.path.join(output_dir, f"{camera_name}_{date.strftime('%Y%m%d_%H%M%S')}.mp4")  
-            media.add_option(f":sout=#transcode{{vcodec=h264,vb=0,scale=0,acodec=mp3,ab=128,channels=2,samplerate=44100}}:standard{{access=file,mux=mp4,dst='{output_file}'}}")  
-  
-            # Initialize VLC player  
             player = instance.media_player_new()  
+            media = instance.media_new(rtsp_url)  
+            media.add_option(f"sout=#transcode{{vcodec=h264}}:std{{access=file,dst={output_file_path}}}")  
             player.set_media(media)  
-  
-            # Start playing the stream  
             player.play()  
   
-            # Check the stream state every second  
-            while True:  
-                state = player.get_state()  
-                if state in (vlc.State.Ended, vlc.State.Error):  
-                    break  
+            while player.get_state() != vlc.State.Ended:  
                 time.sleep(1)  
   
-            # Stop the player and release resources  
-            player.stop()  
-            player.release()  
-            instance.release()  
-  
-            # Print the output file information  
-            file_size = os.path.getsize(output_file) / (1024 * 1024)  
+            file_size = os.path.getsize(output_file_path) / (1024 * 1024)  
             print(f"{output_file}\t{file_size:.2f} MB")  
-        except Exception as e:  
-            print(f"Error: {e}")  
+        else:  
             time.sleep(1)  
   
 if __name__ == "__main__":  
     if len(sys.argv) != 4:  
-        print("Usage: python rtsp_recorder.py <camera_name> <rtsp_url> <output_path>")  
+        print("Usage: python script.py <camera_name> <rtsp_url> <output_path>")  
         sys.exit(1)  
   
-    camera_name, rtsp_url, output_path = sys.argv[1], sys.argv[2], sys.argv[3]  
-    record_rtsp(camera_name, rtsp_url, output_path)  
+    camera_name = sys.argv[1]  
+    rtsp_url = sys.argv[2]  
+    output_path = sys.argv[3]  
+  
+    try:  
+        record_stream(camera_name, rtsp_url, output_path)  
+    except Exception as e:  
+        print(f"Error: {e}")  
