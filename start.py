@@ -1,4 +1,4 @@
-import cv2  
+import ffmpeg  
 import time  
 import os  
 import sys  
@@ -12,41 +12,17 @@ TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
   
   
 def record_stream(camera_name, rtsp_url, output_base_path, time_format):  
-    cap = None  
-    out = None  
-  
     try:  
-        # Connect to the RTSP stream  
-        cap = cv2.VideoCapture(rtsp_url)  
-  
-        # If the connection is interrupted, print a message and return  
-        if not cap.isOpened():  
-            return  
-  
-        # Get the properties of the RTSP stream  
-        fps = int(cap.get(cv2.CAP_PROP_FPS))  
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  
-  
         # Create a timestamp and set the output video file name  
         timestamp = datetime.now().strftime(time_format)  
         output_path = os.path.join(output_base_path, camera_name, timestamp[:10].replace('-', os.sep))  
         os.makedirs(output_path, exist_ok=True)  
         output_file = os.path.join(output_path, f"{timestamp}.mp4")  
   
-        # Initialize the video writer with the stream properties  
-        out = cv2.VideoWriter(output_file, fourcc, fps, (width, height))  
-  
-        # Continuously read frames from the stream while the connection is active  
-        while cap.isOpened():  
-            ret, frame = cap.read()  
-            if ret:  
-                # Write the frame to the output video file  
-                out.write(frame)  
-            else:  
-                # If the frame is not available (stream interrupted), break the loop  
-                break  
+        # Use FFmpeg to record video and audio from the RTSP stream  
+        stream = ffmpeg.input(rtsp_url)  
+        stream = ffmpeg.output(stream, output_file, format='mp4', vcodec='copy', acodec='copy')  
+        ffmpeg.run(stream, overwrite_output=True)  
   
         # Print the file name and size  
         file_size = os.path.getsize(output_file)  
@@ -54,13 +30,6 @@ def record_stream(camera_name, rtsp_url, output_base_path, time_format):
   
     except Exception as e:  
         pass  # Silently handle exceptions to avoid interrupting the recording loop  
-  
-    finally:  
-        # Release the resources (stream and video writer) in the finally block  
-        if cap is not None:  
-            cap.release()  
-        if out is not None:  
-            out.release()  
   
   
 def main(camera_name, rtsp_url, output_path):  
