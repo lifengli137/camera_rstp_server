@@ -1,8 +1,8 @@
-import ffmpeg  
-import time  
 import os  
 import sys  
+import time  
 from datetime import datetime  
+import vlc  
   
 # Time interval (in seconds) to wait before retrying to connect to the RTSP stream  
 RETRY_INTERVAL = 1  
@@ -12,24 +12,27 @@ TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
   
   
 def record_stream(camera_name, rtsp_url, output_base_path, time_format):  
-    try:  
-        # Create a timestamp and set the output video file name  
-        timestamp = datetime.now().strftime(time_format)  
-        output_path = os.path.join(output_base_path, camera_name, timestamp[:10].replace('-', os.sep))  
-        os.makedirs(output_path, exist_ok=True)  
-        output_file = os.path.join(output_path, f"{timestamp}.mp4")  
+    instance = vlc.Instance()  
+    media = instance.media_new(rtsp_url)  
   
-        # Use FFmpeg to record video and audio from the RTSP stream  
-        stream = ffmpeg.input(rtsp_url)  
-        stream = ffmpeg.output(stream, output_file, format='mp4', vcodec='copy', acodec='copy')  
-        ffmpeg.run(stream, overwrite_output=True)  
+    # Create a timestamp and set the output video file name  
+    timestamp = datetime.now().strftime(time_format)  
+    output_path = os.path.join(output_base_path, camera_name, timestamp[:10].replace('-', os.sep))  
+    os.makedirs(output_path, exist_ok=True)  
+    output_file = os.path.join(output_path, f"{timestamp}.mp4")  
+    media.add_option(f":sout=#std{{access=file,mux=mp4,dst='{output_file}'}}")  
   
-        # Print the file name and size  
-        file_size = os.path.getsize(output_file)  
-        print(f"{output_file}\t{file_size}")  
+    player = instance.media_player_new()  
+    player.set_media(media)  
+    player.play()  
   
-    except Exception as e:  
-        pass  # Silently handle exceptions to avoid interrupting the recording loop  
+    while True:  
+        time.sleep(1)  
+        if player.get_state() in [vlc.State.Ended, vlc.State.Error]:  
+            player.stop()  
+            break  
+  
+    print(f"{output_file}\t{os.path.getsize(output_file)}")  
   
   
 def main(camera_name, rtsp_url, output_path):  
