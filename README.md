@@ -15,3 +15,24 @@ Some requirements:
 7. Only print to the STDOUT if video successfully read and written. The format of print: Name_file	File_size(in MB)
 8. Prevent generated file gets corrupted after the RTSP stream closed suddently. 
 9. Prevent generated empty files. 
+
+
+
+---
+sudo apt-get install supervisor  
+
+sudo vi /etc/supervisor/conf.d/cam.conf
+
+[program:cam]  
+command=bash start.sh cam rtsp://user:pass@ip/live0 /output_path/
+autostart=true  
+autorestart=true  
+startretries=3  
+stderr_logfile=/var/log/rtsp/cam.err.log  
+stdout_logfile=/var/log/rtsp/cam.out.log  
+user=user 
+
+sudo supervisorctl reread  
+sudo supervisorctl update  
+
+sudo supervisorctl start cam  
