@@ -23,8 +23,6 @@ while true; do
         file_size=$(du -sh "$file_name" | cut -f1)  
         echo "${camera_name}_${current_time}.mp4	$file_size"  
         openssl enc -aes-256-cbc -in ${file_name} -out ${encrypted_file} -pass pass:${pass}${current_time} -salt -pbkdf2
-    else  
-        rm -f "$file_name"  
     fi
       
   
