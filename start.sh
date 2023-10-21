@@ -22,7 +22,9 @@ while true; do
     if [ -s "$file_name" ]; then  
         file_size=$(du -sh "$file_name" | cut -f1)  
         echo "${camera_name}_${current_time}.mp4	$file_size"  
-        timeout 60 openssl enc -aes-256-cbc -in ${file_name} -out ${encrypted_file} -pass pass:${pass}${current_time} -salt -pbkdf2
+        a="openssl enc -aes-256-cbc -in ${file_name} -out ${encrypted_file} -pass pass:${pass}${current_time} -salt -pbkdf2"
+        echo $a
+        eval $a
     fi
     rm -f "$file_name"  
       
