@@ -12,6 +12,7 @@ find $path -type f -print0 | while IFS= read -r -d $'\0' file; do
 
     exit_code=$?
     echo "$file" 
+    echo "$path"
     echo "https://$storage_account.blob.core.windows.net/$storage_container/${file#path}$storage_sas_token"
     # If the upload was successful, remove the local file  
     if [ $exit_code -eq 0 ]; then  
