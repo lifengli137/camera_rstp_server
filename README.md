@@ -36,5 +36,3 @@ sudo supervisorctl reread
 sudo supervisorctl update  
 
 sudo supervisorctl start cam  
-
-openssl enc -aes-256-cbc -d -in input.enc -out output.mp4 -pass pass:password -salt -md md5
