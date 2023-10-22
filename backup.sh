@@ -10,7 +10,7 @@ storage_sas_token="$4"
 find $path -type f -print0 | while IFS= read -r -d $'\0' file; do  
     # Upload the file to Azure Blob Storage  
 
-    #exit_code=$?  
+    exit_code=$?
     echo "$file" 
     echo "https://$storage_account.blob.core.windows.net/$storage_container/${file#$path/}$storage_sas_token"
     # If the upload was successful, remove the local file  
