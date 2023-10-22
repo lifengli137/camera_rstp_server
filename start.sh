@@ -13,7 +13,7 @@ fi
 while true; do  
     current_time=$(date +"%Y-%m-%d_%H-%M-%S")  
     file_path="${output_path}/${camera_name}/$(date +"%Y/%m/%d")"  
-    file_name="${file_path}/${current_time}.mp4"  
+    file_name="/tmp/${current_time}.mp4"  
     encrypted_file="${file_path}/${current_time}.enc"  
 
     mkdir -p "$file_path"  
