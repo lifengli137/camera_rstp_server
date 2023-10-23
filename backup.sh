@@ -29,7 +29,6 @@ while true; do
     else  
       echo "Error: Failed to transfer $file to Azure Blob Storage"  
     fi  
-    exit
   done
      
   # Sleep for 4 hours  
