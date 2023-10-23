@@ -19,7 +19,7 @@ while true; do
       
     # Perform the azcopy and check the result  
     azcopy cp "$file" "https://$storage_account.blob.core.windows.net/$storage_container/$relative_path?$storage_sas_token" \
-     --overwrite=false --put-md5 --check-md5 FailIfDifferent --block-blob-tier Cold   
+     --overwrite=false --put-md5 --check-md5 FailIfDifferent --block-blob-tier Cool   
      
     # Check if azcopy copy was successful  
     if [ $? -eq 0 ]; then  
