@@ -50,3 +50,8 @@ startretries=3
 stderr_logfile=/var/log/rtsp/backup.err.log
 stdout_logfile=/var/log/rtsp/backup.out.log
 user=user
+
+
+
+
+openssl enc -aes-256-cbc -d -in x.enc -out x.mp4 -k password -salt -md md5
