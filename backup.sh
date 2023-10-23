@@ -4,7 +4,7 @@ path="$1"
 storage_account="$2"  
 storage_container="$3"  
 storage_sas_token="$4"  
-azcopy_path="$5
+azcopy_path="$5"
 
 
 # Traverse the folder and process files  
