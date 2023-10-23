@@ -6,6 +6,7 @@ storage_container="$3"
 storage_sas_token="$4"  
 azcopy_path="$5"
 
+export PATH=$PATH:$azcopy_path
 
 # Traverse the folder and process files  
 find $path -type f -print0 | while IFS= read -r -d $'\0' file; do  
@@ -13,8 +14,7 @@ find $path -type f -print0 | while IFS= read -r -d $'\0' file; do
 
     relative_path=${file#$path}
     
-    export PATH=$PATH:$azcopy_path
-    azcopy cp "$file" "https://$storage_account.blob.core.windows.net/$storage_container/$relative_path?$storage_sas_token" --overwrite=false --put-md5 --check-md5 FailIfDifferent
+    azcopy cp "$file" "https://$storage_account.blob.core.windows.net/$storage_container/$relative_path?$storage_sas_token" --overwrite=false --put-md5 --check-md5 FailIfDifferent > /dev/null 2>&1  
     exit_code=$?
     # If the upload was successful, remove the local file  
     if [ $exit_code -eq 0 ]; then  
@@ -22,7 +22,8 @@ find $path -type f -print0 | while IFS= read -r -d $'\0' file; do
         echo "File $file uploaded and removed successfully."  
     else  
         echo "Error: File $file failed to upload. Exit code: $exit_code"  
-    fi  
+    fi
+    sleep 60
 done  
 
 # Remove empty directories  
