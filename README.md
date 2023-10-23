@@ -36,3 +36,17 @@ sudo supervisorctl reread
 sudo supervisorctl update  
 
 sudo supervisorctl start cam  
+
+
+
+
+
+[program:backup]
+environment=PATH="%(ENV_PATH)s:$Azcopy_Path",AZCOPY_JOB_PLAN_LOCATION="/var/log/rtsp/azcopy_job_plan.log",AZCOPY_LOG_LOCATION="/var/log/rtsp/azcopy_job.log"
+command=bash $Code_repo_path/backup.sh "Data_path" "Storage_Account" "Container" "SAS"
+autostart=true
+autorestart=true
+startretries=3
+stderr_logfile=/var/log/rtsp/backup.err.log
+stdout_logfile=/var/log/rtsp/backup.out.log
+user=user
