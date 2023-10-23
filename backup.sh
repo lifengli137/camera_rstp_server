@@ -23,7 +23,6 @@ find $path -type f -print0 | while IFS= read -r -d $'\0' file; do
     else  
         echo "Error: File $file failed to upload. Exit code: $exit_code"  
     fi
-    sleep 60
 done  
 
 # Remove empty directories  
