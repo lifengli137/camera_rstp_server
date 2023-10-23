@@ -19,9 +19,9 @@ find $path -type f -print0 | while IFS= read -r -d $'\0' file; do
     # If the upload was successful, remove the local file  
     if [ $exit_code -eq 0 ]; then  
         #rm "$file"  
-        echo "File $file uploaded and removed successfully."  
+        echo "File $file uploaded and removed successfully."  >> ./log.txt2>&1  
     else  
-        echo "Error: File $file failed to upload. Exit code: $exit_code"  
+        echo "Error: File $file failed to upload. Exit code: $exit_code"  >> ./err.txt2>&1  
     fi
 done  
 
