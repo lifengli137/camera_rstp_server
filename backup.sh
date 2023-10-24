@@ -4,6 +4,7 @@ path="$1"
 storage_account="$2"  
 storage_container="$3"  
 storage_sas_token="$4"  
+notification_email="$5"
 
 if [ -f /tmp/find.tmp ]; then  
   rm /tmp/find.tmp  
@@ -18,7 +19,7 @@ while true; do
     relative_path=${file#$path}
       
     # Perform the azcopy and check the result  
-    azcopy cp "$file" "https://$storage_account.blob.core.windows.net/$storage_container/$relative_path?$storage_sas_token" \
+    timeout 600 azcopy cp "$file" "https://$storage_account.blob.core.windows.net/$storage_container/$relative_path?$storage_sas_token" \
      --overwrite=false --put-md5 --check-md5 FailIfDifferent --block-blob-tier Cool   
      
     # Check if azcopy copy was successful  
