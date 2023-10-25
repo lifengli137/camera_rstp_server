@@ -83,7 +83,7 @@ CPLUSPLUS_FLAGS =       $(COMPILE_OPTS) -Wall -DBSD=1 $(CPPFLAGS) $(CXXFLAGS) -s
 ...
 LDFLAGS=                -L /live555_path/openssl/lib
 ...
-``
+```
 
 # Compile live555
 ./genMakefiles linux
