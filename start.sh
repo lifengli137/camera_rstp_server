@@ -17,7 +17,7 @@ while true; do
     encrypted_file="${file_path}/${current_time}.enc"  
 
     mkdir -p "$file_path"  
-    timeout 600 openRTSP -4 -D 1 -B 10000000 -b 10000000 -t "$rtsp_url" > "$file_name" 2>/dev/null  
+    timeout 600 openRTSP -4 -D 10 -B 10000000 -b 10000000 -t "$rtsp_url" > "$file_name" 2>/dev/null  
   
     if [ -s "$file_name" ]; then  
         file_size=$(du -sh "$file_name" | cut -f1)  
