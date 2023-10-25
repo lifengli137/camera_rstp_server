@@ -63,24 +63,27 @@ openssl enc -aes-256-cbc -d -in x.enc -out x.mp4 -k password -salt -md md5
 wget https://www.openssl.org/source/old/1.1.0/openssl-1.1.0l.tar.gz
 
 ## Compile openssl
-
+```
 tar zxf openssl-1.1.0l.tar.gz 
 cd openssl-1.1.0l/
 ./config no-asm shared no-async --prefix=/live555_path/openssl
 make
 make install
+```
 
 # Live555
 ## Download live555
 wget http://www.live555.com/liveMedia/public/live.2023.07.24.tar.gz
 
 ## Configure live555
+```
 COMPILE_OPTS =          $(INCLUDES) -I/live555_path/openssl/include -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DNO_STD_LIB
 ...
 CPLUSPLUS_FLAGS =       $(COMPILE_OPTS) -Wall -DBSD=1 $(CPPFLAGS) $(CXXFLAGS) -std=c++11
 ...
 LDFLAGS=                -L /live555_path/openssl/lib
 ...
+``
 
 # Compile live555
 ./genMakefiles linux
