@@ -27,13 +27,14 @@ while true; do
         echo "${camera_name}_${current_time}.mp4	$file_size"  
 
         openssl rand -base64 32 > ${key_file}
-        openssl pkeyutl -encrypt -inkey ~/.ssh/id_rsa.pub.pem -pubin -in ${key_file} -out ${encrypted_key}
+        openssl rsautl -encrypt -inkey ~/.ssh/id_rsa.pub.pem -pubin -in ${key_file} -out ${encrypted_key}
 
         openssl enc -aes-256-cbc -in ${file_name} -out ${encrypted_file} -pass file:${key_file} -salt -md md5
 
-        rm -f "$file_name"  
+        
         rm -f "$key_file"
     fi
-  
+    
+    rm -f "$file_name"  
     sleep 1  
 done  
