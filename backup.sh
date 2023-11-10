@@ -25,7 +25,7 @@ while true; do
     # Check if azcopy copy was successful  
     if [ $? -eq 0 ]; then  
       # Remove the local file  
-      rm "$file"  
+      #rm "$file"  
       echo "File $file uploaded and removed successfully."
     else  
       echo "Error: Failed to transfer $file to Azure Blob Storage"  
